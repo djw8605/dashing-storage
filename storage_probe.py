@@ -33,7 +33,8 @@ def main():
         if split_line[5] == MOUNT:
             dash = dashing.DashingImport('viz.unl.edu', auth_token = '542221b1-b765-4cd9-a9e6-0c0727870375')
             send_dict = { 'min': 0, 'max': float("%.1f" % (float(split_line[1]) / terabyte)) , 'value': float("%.1f" % (float(split_line[2]) / terabyte)), 'moreinfo': "Capacity: %s" % sizeof_fmt(int(split_line[1])) }
-            dash.SendEvent('TuskerStorage', send_dict)
+            dash.SendEvent('CraneStorage', send_dict)
+            dash.SendEvent('HCCAmazonPrice', {'craneStorage': send_dict['value']})
 
 
 

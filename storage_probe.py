@@ -37,6 +37,27 @@ def main():
             dash.SendEvent('HCCAmazonPrice', {'craneStorage': send_dict['value']})
 
 
+    # Send the number of jobs running
+    command = "squeue -t R -O numcpus,account -h".split(" ")
+    p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    (stdout, stderr) = p.communicate()
+    sum_running_cores = 0
+    per_user_cores = {}
+    for line in stdout.split("\n"):
+        try:
+            (cores, username) = line.split()
+            sum_running_cores += int(cores)
+            username.strip()
+            if username not in per_user_cores:
+                per_user_cores[username] = 0
+            per_user_cores[username] += int(cores)
+        except:
+            print "Error parsing line: %s" % line
+            pass
+    dash.SendEvent('CraneRunning', {'current': sum_running_cores, 'last': sum_running_cores})
+    dash.SendEvent('HCCAmazonPrice', {'CraneCores': sum_running_cores})
+
+
 
 
 

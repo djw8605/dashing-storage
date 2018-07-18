@@ -2,6 +2,8 @@
 
 import subprocess
 import dashing
+import os
+import time
 
 MOUNT = "/lustre"
 
@@ -54,7 +56,19 @@ def main():
         except:
             print "Error parsing line: %s" % line
             pass
-    dash.SendEvent('CraneRunning', {'current': sum_running_cores, 'last': sum_running_cores})
+        
+    if os.path.isfile('dashing.txt') and os.access('dashing.txt', os.R_OK):
+        date = os.path.getmtime('dashing.txt')
+        with open('dashing.txt', 'r') as file:
+            last_running_cores = int(file.read())
+    else:
+        print "Error reading from dashing.txt"
+        date = time.time()
+        last_running_cores = sum_running_cores
+    with open('dashing.txt', 'w') as file:
+        file.write(str(sum_running_cores))
+    date = time.strftime('%m-%d-%Y %H:%M:%S', time.localtime(date))
+    dash.SendEvent('CraneRunning', {'current': sum_running_cores, 'last': last_running_cores, 'last_period': date})
     dash.SendEvent('HCCAmazonPrice', {'CraneCores': sum_running_cores})
 
 

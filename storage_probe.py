@@ -28,7 +28,7 @@ def sizeof_fmt(num):
 def main():
     try:
         with open('key.txt', 'r') as file:
-            auth_key = file.read()
+            auth_key = file.read().strip()
     except:
         print "FATAL ERROR: Unable to open key.txt"
         sys.exit()

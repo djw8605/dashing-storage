@@ -1,1 +1,3 @@
 dashing.txt
+*.pyc
+cron.log

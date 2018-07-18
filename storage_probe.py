@@ -28,7 +28,10 @@ def sizeof_fmt(num):
 def main():
     try:
         with open('key.txt', 'r') as file:
-        auth_key = file.read()
+            auth_key = file.read()
+    except:
+        print "FATAL ERROR: Unable to open key.txt"
+        sys.exit()
 
     p = subprocess.Popen(["df", "-P", MOUNT], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (stdoutdata, stderrdata) = p.communicate()

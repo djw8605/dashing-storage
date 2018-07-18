@@ -26,6 +26,10 @@ def sizeof_fmt(num):
         return '1 byte'
 
 def main():
+    try:
+        with open('key.txt', 'r') as file:
+        auth_key = file.read()
+
     p = subprocess.Popen(["df", "-P", MOUNT], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (stdoutdata, stderrdata) = p.communicate()
     for line in stdoutdata.split("\n"):
@@ -33,7 +37,7 @@ def main():
         if len(split_line) < 5:
             continue
         if split_line[5] == MOUNT:
-            dash = dashing.DashingImport('viz.unl.edu', auth_token = '542221b1-b765-4cd9-a9e6-0c0727870375')
+            dash = dashing.DashingImport('viz.unl.edu', auth_token = auth_key)
             send_dict = { 'min': 0, 'max': float("%.1f" % (float(split_line[1]) / terabyte)) , 'value': float("%.1f" % (float(split_line[2]) / terabyte)), 'moreinfo': "Capacity: %s" % sizeof_fmt(int(split_line[1])) }
             dash.SendEvent('CraneStorage', send_dict)
             dash.SendEvent('HCCAmazonPrice', {'craneStorage': send_dict['value']})
@@ -70,8 +74,8 @@ def main():
     with open('dashing.txt', 'w') as file:
         file.write(str(sum_running_cores))
     date = time.strftime('%m-%d-%Y %H:%M:%S', time.localtime(date))
-    dash.SendEvent('CraneRunning', {'current': sum_running_cores, 'last': last_running_cores, 'last_period': date})
-    dash.SendEvent('HCCAmazonPrice', {'CraneCores': sum_running_cores})
+    dash.SendEvent('TuskerRunning', {'current': sum_running_cores, 'last': last_running_cores, 'last_period': date})
+    dash.SendEvent('HCCAmazonPrice', {'TuskerCores': sum_running_cores})
 
 
 
